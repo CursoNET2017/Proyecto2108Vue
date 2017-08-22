@@ -26,7 +26,7 @@ export default {
             let _this = this;
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:49305/api/Personas/',
+                url: 'http://localhost:50406/api/Personas/',
                 success: function (response) {
                     _this.datapadre.personas = response;
                 }
