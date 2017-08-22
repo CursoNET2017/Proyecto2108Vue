@@ -13,9 +13,8 @@
         <input v-else name="DNI" type="text" v-model="datapadre.newPersona.DNI" @input="validarPersona" placeholder="Introduce DNI">
         <div id="botones">
             <button @click="addPersona" :disabled="datapadre.currentPersona || !isValid">Añadir</button>
-            <button @click="toggleEdit" :disabled="!datapadre.currentPersona">Edit</button>
-            <button :disabled="!datapadre.currentPersona || !datapadre.editMode && !isValid">Confirmar</button>
-            <button @click="deletePersona">Borrar</button>
+            <button @click="updatePersona" :disabled="!datapadre.currentPersona || !datapadre.editMode && !isValid">Actualizar</button>
+            <button @click="deletePersona" :disabled="!datapadre.currentPersona">Borrar</button>
         </div>
 
     </div>
@@ -43,8 +42,8 @@ export default {
             let _this = this.datapadre;
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:50406/api/Personas/' + _this.newPersona.Id,
-                data: { Nombre: _this.newPersona.Nombre, Apellidos: _this.newPersona.Apellidos, Edad: _this.newPersona.Edad },
+                url: 'http://localhost:50406/api/Personas/',
+                data: { Nombre: _this.newPersona.Nombre, Apellidos: _this.newPersona.Apellidos, Edad: _this.newPersona.Edad, DNI: _this.newPersona.DNI},
                 success: function (response) {
                     _this
                         .personas
@@ -53,18 +52,14 @@ export default {
                 }
             });
         },
-        toggleEdit: function () {
-            var state = this.datapadre.editMode;
-            this.datapadre.editMode = !state;
-        },
-        confirmEdit: function () {
+        updatePersona: function () {
             let _this = this.datapadre;
             $.ajax({
                 type: 'PUT',
-                url: 'http://localhost:50406/api/Personas/',
-                data: { Nombre: _this.currentPersona.Nombre, Apellidos: _this.currentPersona.Apellidos, Edad: _this.currentPersona.Edad },
+                url: 'http://localhost:50406/api/Personas/'+_this.currentPersona.Id,
+                data: { Id:_this.currentPersona.Id, Nombre: _this.currentPersona.Nombre, Apellidos: _this.currentPersona.Apellidos, Edad: _this.currentPersona.Edad, DNI: _this.newPersona.DNI },
                 success: function (response) {
-                    _this.personas.index
+                    _this.personas.indexOf(response)
                 }
             });
 
