@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <maestro :datapadre="datos"></maestro>
-    <detalle :datapadre="datos"></detalle>
+    <maestroPersona :datapadre="datos"></maestroPersona>
+    <detallePersona :datapadre="datos"></detallePersona>
 
   </div>
 </template>
 
 <script>
-import maestro from './components/Maestro.vue'
-import detalle from './components/Detalle.vue'
+import maestroPersona from './components/MaestroPersona.vue'
+import detallePersona from './components/DetallePersona.vue'
 
 
 export default {
@@ -25,7 +25,7 @@ export default {
     }
   },
   components: {
-    maestro, detalle
+    maestroPersona, detallePersona
   }
 }
 </script>

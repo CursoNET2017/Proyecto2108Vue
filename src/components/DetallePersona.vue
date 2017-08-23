@@ -32,7 +32,7 @@
 <script>
 
 export default {
-    name: 'detalle',
+    name: 'detallePersona',
     props: ['datapadre'],
     data() {
         return { isValid: false };
