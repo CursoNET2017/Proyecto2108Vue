@@ -1,10 +1,10 @@
 <template>
-    <div id="personas">
+    <div id="maestro">
 
         <h1>Personas</h1>
+        <button @click="nuevaPersona">+Nuevo Persona</button>
         <ul>
-            <button @click="nuevaPersona">+Nuevo Persona</button>
-            <li v-for="persona in datapadre.personas" @click="selectPersona(persona)">
+            <li v-for="persona in datapadre.backup" @click="selectPersona(persona)">
                 {{persona.Apellidos}},{{persona.Nombre}} - {{persona.Edad}} años
             </li>
         </ul>
@@ -28,18 +28,19 @@ export default {
                 type: 'GET',
                 url: 'http://localhost:50406/api/Personas/',
                 success: function (response) {
-                    _this.datapadre.personas = response;
+                    _this.datapadre.backup =JSON.parse(JSON.stringify(response));
+                    _this.datapadre.personas =JSON.parse(JSON.stringify(response));
                 }
             });
 
         },
         selectPersona: function (persona) {
-            this.datapadre.editMode = false;
-            this.datapadre.currentPersona = persona;
-            this.datapadre.newPersona = { Nombre: "", Apellidos: "", Edad: "" };
+            this.datapadre.editMode = true;
+            this.datapadre.currentPersona = JSON.parse(JSON.stringify(persona));
+            this.datapadre.newPersona = { Nombre: "", Apellidos: "", Edad: "", DNI: "" };
         },
         nuevaPersona: function (persona) {
-            this.datapadre.editMode = true;
+            this.datapadre.editMode = false;
             this.datapadre.currentPersona = null;
         },
         error: function (xhr, textStatus, errorThrown) {
@@ -54,11 +55,28 @@ export default {
 </script>
 
 <style scoped>
-li {
-    list-style-type: none
+#maestro {
+    width: 50%;
+}
+
+h1{
+    width:100%;
 }
 
 ul {
-    float: left;
+    width: 100%;
+}
+
+li {
+    list-style-type: none;
+    width:100%;
+}
+
+li:hover {
+    cursor: pointer;
+}
+
+.selected{
+    background-color:brown;
 }
 </style>

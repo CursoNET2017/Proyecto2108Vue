@@ -1,19 +1,28 @@
 <template>
     <div id="panel">
-        <label>Nombre: </label>
-        <input v-if="datapadre.currentPersona != null" name="nombre" type="text" v-model="datapadre.currentPersona.Nombre" @input="validarPersona" placeholder="Introduce Nombre">
-        <input v-else name="nombre" type="text" v-model="datapadre.newPersona.Nombre" @input="validarPersona" placeholder="Introduce Nombre">
-        <label>Apellidos: </label>
-        <input v-if="datapadre.currentPersona != null" name="apellidos" type="text" v-model="datapadre.currentPersona.Apellidos" @input="validarPersona" placeholder="Introduce Apellidos">
-        <input v-else name="apellidos" type="text" v-model="datapadre.newPersona.Apellidos" @input="validarPersona" placeholder="Introduce Apellidos">
-        <label>Edad: </label>
-        <input v-if="datapadre.currentPersona != null" name="edad" type="number" v-model="datapadre.currentPersona.Edad" @input="validarPersona" placeholder="Introduce Edad">
-        <input v-else name="edad" type="number" v-model="datapadre.newPersona.Edad" @input="validarPersona" placeholder="Introduce Edad">
-        <input v-if="datapadre.currentPersona != null" name="DNI" type="text" v-model="datapadre.currentPersona.DNI" @input="validarPersona" placeholder="Introduce DNI">
-        <input v-else name="DNI" type="text" v-model="datapadre.newPersona.DNI" @input="validarPersona" placeholder="Introduce DNI">
+        <div class="linea">
+            <label>Nombre: </label>
+            <input v-if="datapadre.currentPersona != null" name="nombre" type="text" v-model="datapadre.currentPersona.Nombre" @input="validarPersona" placeholder="Introduce Nombre">
+            <input v-else name="nombre" type="text" v-model="datapadre.newPersona.Nombre" @input="validarPersona" placeholder="Introduce Nombre">
+        </div>
+        <div class="linea">
+            <label>Apellidos: </label>
+            <input v-if="datapadre.currentPersona != null" name="apellidos" type="text" v-model="datapadre.currentPersona.Apellidos" @input="validarPersona" placeholder="Introduce Apellidos">
+            <input v-else name="apellidos" type="text" v-model="datapadre.newPersona.Apellidos" @input="validarPersona" placeholder="Introduce Apellidos">
+        </div>
+        <div class="linea">
+            <label>Edad: </label>
+            <input v-if="datapadre.currentPersona != null" name="edad" type="number" v-model="datapadre.currentPersona.Edad" @input="validarPersona" placeholder="Introduce Edad">
+            <input v-else name="edad" type="number" v-model="datapadre.newPersona.Edad" @input="validarPersona" placeholder="Introduce Edad">
+        </div>
+        <div class="linea">
+            <label>DNI: </label>
+            <input v-if="datapadre.currentPersona != null" name="DNI" type="text" v-model="datapadre.currentPersona.DNI" @input="validarPersona" placeholder="Introduce DNI">
+            <input v-else name="DNI" type="text" v-model="datapadre.newPersona.DNI" @input="validarPersona" placeholder="Introduce DNI">
+        </div>
         <div id="botones">
             <button @click="addPersona" :disabled="datapadre.currentPersona || !isValid">Añadir</button>
-            <button @click="updatePersona" :disabled="!datapadre.currentPersona || !datapadre.editMode && !isValid">Actualizar</button>
+            <button @click="updatePersona" :disabled="!datapadre.currentPersona || !datapadre.editMode || !isValid">Actualizar</button>
             <button @click="deletePersona" :disabled="!datapadre.currentPersona">Borrar</button>
         </div>
 
@@ -24,8 +33,7 @@
 
 export default {
     name: 'detalle',
-    props:
-    ['datapadre'],
+    props: ['datapadre'],
     data() {
         return { isValid: false };
     },
@@ -36,6 +44,9 @@ export default {
             if (!(personToValidate.Nombre.length > 0 && personToValidate.Nombre.length <= 20)) _isValid = false;
             if (!(personToValidate.Apellidos.length > 0 && personToValidate.Apellidos.length <= 20)) _isValid = false;
             if (!(personToValidate.Edad > 0 && personToValidate.Edad <= 150)) _isValid = false;
+
+            var regExpDNI = /\d{8}[A-Za-z]$/;
+            if (!regExpDNI.test(personToValidate.DNI)) _isValid = false;
             this.isValid = _isValid;
         },
         addPersona: function () {
@@ -43,12 +54,11 @@ export default {
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:50406/api/Personas/',
-                data: { Nombre: _this.newPersona.Nombre, Apellidos: _this.newPersona.Apellidos, Edad: _this.newPersona.Edad, DNI: _this.newPersona.DNI},
+                data: _this.newPersona,
                 success: function (response) {
-                    _this
-                        .personas
-                        .push({ Id: response.Id, Nombre: response.Nombre, Apellidos: response.Apellidos, Edad: response.Edad });
+                    _this.personas.push(response);
                     _this.newPersona = { Nombre: "", Apellidos: "", Edad: "", DNI: "" };
+                    _this.backup = JSON.parse(JSON.stringify(_this.personas));
                 }
             });
         },
@@ -56,10 +66,13 @@ export default {
             let _this = this.datapadre;
             $.ajax({
                 type: 'PUT',
-                url: 'http://localhost:50406/api/Personas/'+_this.currentPersona.Id,
-                data: { Id:_this.currentPersona.Id, Nombre: _this.currentPersona.Nombre, Apellidos: _this.currentPersona.Apellidos, Edad: _this.currentPersona.Edad, DNI: _this.newPersona.DNI },
+                url: 'http://localhost:50406/api/Personas/' + _this.currentPersona.Id,
+                data: _this.currentPersona,
                 success: function (response) {
-                    _this.personas.indexOf(response)
+                    var index = _this.backup.findIndex((el) => el.Id == _this.currentPersona.Id);
+                    _this.personas[index] = _this.currentPersona;
+                    _this.backup = JSON.parse(JSON.stringify(_this.personas));
+                    _this.currentPersona = null;
                 }
             });
 
@@ -70,14 +83,12 @@ export default {
                 type: 'DELETE',
                 url: 'http://localhost:50406/api/Personas/' + _this.currentPersona.Id,
                 success: function (response) {
-                    _this.personas
-                        .splice(_this.personas.indexOf(
-                            { Nombre: _this.currentPersona.Nombre, Apellidos: _this.currentPersona.Apellidos, Edad: _this.currentPersona.Edad }
-                        ), 1);
+                    var index = _this.backup.findIndex((el) => { el.Id == _this.currentPersona.Id });
+                    _this.personas.splice(index, 1);
+                    _this.backup = JSON.parse(JSON.stringify(_this.personas));
+                    _this.currentPersona = null;
                 }
             });
-            _this.currentPersona = { Nombre: "", Apellidos: "", Edad: "" };
-
         },
         error: function (xhr, textStatus, errorThrown) {
             alert("Error!->" + errorThrown + "-->" + xhr.responseText);
@@ -92,6 +103,29 @@ export default {
 
 <style scoped>
 #panel {
-    float: right;
+    margin-left: 5%;
+    width: 45%;
+}
+
+.linea {
+    width: 100%
+}
+
+label,
+input {
+    display: block;
+}
+
+label {
+    width: 25%;
+}
+
+input {
+    margin-left: 5%;
+    width: 55%;
+}
+
+#botones {
+    margin-top: 15px;
 }
 </style>

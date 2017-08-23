@@ -16,10 +16,11 @@ export default {
   data() {
     return {
       datos: {
+        backup: [],
         personas: [],
         currentPersona: null,
-        newPersona: { Nombre: "", Apellidos: "", Edad: "", DNI:"",
-        editMode: true}
+        newPersona: { Nombre: "", Apellidos: "", Edad: "", DNI: "" },
+        editMode: true
       }
     }
   },
@@ -35,6 +36,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+* {
+  float: left;
 }
 </style>
