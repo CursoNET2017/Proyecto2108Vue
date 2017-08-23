@@ -22,7 +22,7 @@ export default {
         return {};
     },
     methods: {
-        getCuentas: function () {
+        getCuenta: function () {
             let _this = this;
             $.ajax({
                 type: 'GET',

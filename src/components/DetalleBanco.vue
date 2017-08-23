@@ -31,7 +31,7 @@
 <script>
 
 export default {
-    name: 'detalle',
+    name: 'detalleBanco',
     props: ['datapadre'],
     data() {
         return { isValid: false };
@@ -42,9 +42,6 @@ export default {
             var _isValid = true;
             if (!(cuentaToValidate.Cuenta.length > 0 && cuentaToValidate.Cuenta.length <= 20)) _isValid = false;
             if (!(cuentaToValidate.Banco.length > 0 && cuentaToValidate.Banco.length <= 20)) _isValid = false;
-
-            var regExpDNI = /\d{8}[A-Za-z]$/;
-            if (!regExpDNI.test(cuentaToValidate.DNI)) _isValid = false;
             this.isValid = _isValid;
         },
         addCuenta: function () {

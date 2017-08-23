@@ -5,7 +5,7 @@
         <button @click="nuevaDomicilio">+Nuevo Domicilio</button>
         <ul>
             <li v-for="domicilio in datapadre.backup" @click="selectDomicilio(domicilio)">
-                {{domicilio.Portal}},{{domicilio.Calle}} - {{domicilio.Piso}} años
+                {{domicilio.Calle}}, {{domicilio.Portal}}
             </li>
         </ul>
 
