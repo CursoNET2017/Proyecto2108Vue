@@ -1,11 +1,11 @@
 <template>
-    <div id="maestro">
+    <div id="maestroPersona">
 
         <h1>Personas</h1>
         <button @click="nuevaPersona">+Nuevo Persona</button>
         <ul>
             <li v-for="persona in datapadre.backup" @click="selectPersona(persona)">
-                {{persona.Apellidos}},{{persona.Nombre}} - {{persona.Edad}} años
+                {{persona.Apellidos}},{{persona.Nombre}}
             </li>
         </ul>
 
@@ -15,7 +15,7 @@
 <script>
 
 export default {
-    name: 'maestro',
+    name: 'maestroPersona',
     props:
     ['datapadre'],
     data() {
